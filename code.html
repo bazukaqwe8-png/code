@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>VoteSphere Core | Real-Time Cryptographic Election Node</title>
+    <style>
+        :root {
+            --bg-dark: #090d16;
+            --surface: #131b2e;
+            --surface-hover: #1e2942;
+            --text-main: #f1f5f9;
+            --text-muted: #94a3b8;
+            --primary: #2563eb;
+            --primary-glow: rgba(37, 99, 235, 0.3);
+            --success: #10b981;
+            --danger: #ef4444;
+            --border: #1e293b;
+            --warning: #f59e0b;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-dark);
+            color: var(--text-main);
+            line-height: 1.6;
+            padding-bottom: 60px;
+        }
+
+        header {
+            background-color: rgba(19, 27, 46, 0.85);
+            backdrop-filter: blur(12px);
+            border-bottom: 1px solid var(--border);
+            padding: 16px 5%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .logo { font-size: 1.4rem; font-weight: 800; letter-spacing: -0.5px; }
+        .logo span { color: var(--primary); }
+
+        .header-meta {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .timer-badge {
+            background-color: rgba(245, 158, 11, 0.1);
+            border: 1px solid var(--warning);
+            color: var(--warning);
+            padding: 6px 12px;
+            border-radius: 6px;
+            font-family: monospace;
+            font-weight: 700;
+            font-size: 0.9rem;
+        }
+
+        .role-indicator {
+            background-color: #1e293b;
+            padding: 6px 14px;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            border: 1px solid var(--border);
+            color: var(--text-muted);
+        }
+        .role-indicator.active-role { color: #fff; background-color: #1e3a8a; border-color: var(--primary); }
+
+        .app-container { max-width: 1200px; margin: 40px auto; padding: 0 24px; }
+
+        /* Auth Gateway Panel */
+        .auth-gate {
+            max-width: 480px;
+            margin: 60px auto;
+            background-color: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 32px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.5);
+        }
+
+        .auth-tabs {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 8px;
+            margin-bottom: 24px;
+            background-color: var(--bg-dark);
+            padding: 4px;
+            border-radius: 8px;
+        }
+
+        .auth-tab {
+            background: none; border: none; color: var(--text-muted); padding: 8px;
+            font-size: 0.85rem; font-weight: 600; cursor: pointer; border-radius: 6px; text-align: center;
+        }
+        .auth-tab.active { background-color: var(--primary); color: white; }
+
+        .form-group { margin-bottom: 20px; }
+        .form-group label { display: block; font-size: 0.85rem; font-weight: 600; color: var(--text-muted); margin-bottom: 8px; text-transform: uppercase; }
+        .form-group input, .form-group textarea { width: 100%; padding: 12px; background-color: var(--bg-dark); border: 1px solid var(--border); border-radius: 6px; color: white; font-size: 1rem; outline: none; }
+        .form-group input:focus, .form-group textarea:focus { border-color: var(--primary); }
+
+        .btn-submit { width: 100%; background-color: var(--primary); color: white; border: none; padding: 12px; border-radius: 6px; font-size: 1rem; font-weight: 600; cursor: pointer; }
+        .btn-submit:hover { background-color: #1d4ed8; }
+        .btn-submit:disabled { background-color: #334155; color: var(--text-muted); cursor: not-allowed; }
+
+        /* Workspace Grid Views */
+        .dashboard-view { display: none; }
+        .dashboard-header { margin-bottom: 30px; border-bottom: 1px solid var(--border); padding-bottom: 16px; display: flex; justify-content: space-between; align-items: center; }
+
+        .grid-two { display: grid; grid-template-columns: 1fr 1fr; gap: 32px; }
+        @media (max-width: 968px) { .grid-two { grid-template-columns: 1fr; } }
+
+        .card { background-color: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 24px; margin-bottom: 24px; }
+        .card h3 { font-size: 1.2rem; margin-bottom: 16px; border-bottom: 1px solid var(--border); padding-bottom: 10px; }
+
+        /* Ballot Selection Form Elements */
+        .ballot-option { background-color: var(--bg-dark); border: 2px solid var(--border); border-radius: 8px; padding: 16px; margin-bottom: 12px; display: flex; justify-content: space-between; align-items: center; cursor: pointer; }
+        .ballot-option.selected { border-color: var(--primary); background-color: rgba(37, 99, 235, 0.08); }
+        .radio-circle { width: 18px; height: 18px; border: 2px solid var(--border); border-radius: 50%; }
+        .ballot-option.selected .radio-circle { background-color: var(--primary); border-color: var(--primary); }
+
+        /* Dynamic Graph Rendering */
+        .chart-row { margin-bottom: 16px; }
+        .chart-meta { display: flex; justify-content: space-between; font-size: 0.9rem; margin-bottom: 6px; }
+        .bar-outer { width: 100%; height: 20px; background-color: var(--bg-dark); border-radius: 10px; overflow: hidden; border: 1px solid var(--border); }
+        .bar-inner { height: 100%; width: 0%; background: linear-gradient(90deg, #3b82f6, #2563eb); transition: width 0.6s cubic-bezier(0.4, 0, 0.2, 1); border-radius: 10px; }
+
+        /* System Audit Ticker Logs Container */
+        .log-terminal { background-color: #040711; border: 1px solid var(--border); border-radius: 8px; padding: 16px; font-family: monospace; font-size: 0.85rem; height: 180px; overflow-y: auto; color: #34d399; }
+        .log-entry { margin-bottom: 6px; border-left: 2px solid #10b981; padding-left: 8px; animation: fadeIn 0.3s ease; }
+        .log-entry.warn { border-color: var(--warning); color: var(--warning); }
+        .log-entry.crit { border-color: var(--danger); color: var(--danger); }
+
+        table { width: 100%; border-collapse: collapse; margin-top: 10px; font-size: 0.9rem; }
+        th, td { padding: 12px; text-align: left; border-bottom: 1px solid var(--border); }
+        th { color: var(--text-muted); font-weight: 500; }
+
+        .badge-status { padding: 2px 8px; border-radius: 12px; font-size: 0.75rem; font-weight: bold; }
+        .badge-success { background-color: rgba(16, 185, 129, 0.15); color: var(--success); }
+        .badge-danger { background-color: rgba(239, 68, 68, 0.15); color: var(--danger); }
+
+        .logout-btn { background: none; border: 1px solid var(--border); color: var(--text-muted); padding: 6px 12px; border-radius: 4px; cursor: pointer; font-size: 0.85rem; }
+        .logout-btn:hover { color: white; border-color: var(--text-muted); }
+
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(-4px); } to { opacity: 1; transform: translateY(0); } }
+    </style>
+</head>
+<body>
+
+    <header>
+        <div class="logo">🛡️ Vote<span>Sphere</span> Live</div>
+        <div class="header-meta">
+            <div id="countdownTimer" class="timer-badge">CLOSING IN: 02:00</div>
+            <div id="headerRoleBadge" class="role-indicator">Role: Unauthenticated</div>
+        </div>
+    </header>
+
+    <div class="app-container">
+
+        <!-- ================= SYSTEM AUDIT SECURITY STREAM ================= -->
+        <div class="card" style="margin-bottom: 32px; padding: 16px;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+                <span style="font-size: 0.85rem; font-weight: 700; text-transform: uppercase; color: var(--text-muted); letter-spacing: 0.5px;">Cryptographic Ledger Audit Feed</span>
+                <span style="width: 8px; height: 8px; background-color: var(--success); border-radius: 50%; display: inline-block; box-shadow: 0 0 8px var(--success);"></span>
+            </div>
+            <div id="systemLogTerminal" class="log-terminal">
+                <!-- Appended programmatically via core pipeline -->
+            </div>
+        </div>
+
+        <!-- ================= AUTH GATEWAY INTERFACE ================= -->
+        <div id="authGateView" class="auth-gate">
+            <h2 style="text-align: center; margin-bottom: 8px;">Access Portal</h2>
+            <p style="text-align: center; font-size: 0.9rem; color: var(--text-muted); margin-bottom: 24px;">Select privilege layer to instantiate a network profile token.</p>
+            
+            <div class="auth-tabs">
+                <button class="auth-tab active" id="tab-voter" onclick="switchAuthTab('voter')">Voter</button>
+                <button class="auth-tab" id="tab-candidate" onclick="switchAuthTab('candidate')">Candidate</button>
+                <button class="auth-tab" id="tab-admin" onclick="switchAuthTab('admin')">Admin</button>
+            </div>
+
+            <form onsubmit="executePortalLogin(event)">
+                <div class="form-group">
+                    <label id="idFieldLabel">Voter Passcode ID</label>
+                    <input type="text" id="authIdentifier" value="VOTE-101" required>
+                    <p id="credentialTip" style="font-size: 0.75rem; color: var(--text-muted); margin-top: 6px;">Demo Hint: Use <strong>VOTE-101</strong> or <strong>VOTE-202</strong></p>
+                </div>

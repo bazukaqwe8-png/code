@@ -1,0 +1,328 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>VoteSphere | Secure End-to-End Verifiable Voting System</title>
+    <style>
+        :root {
+            --bg-dark: #090d16;
+            --surface: #131b2e;
+            --surface-hover: #1e2942;
+            --text-main: #f1f5f9;
+            --text-muted: #94a3b8;
+            --primary: #2563eb;
+            --primary-glow: rgba(37, 99, 235, 0.4);
+            --success: #10b981;
+            --border: #1e293b;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-dark);
+            color: var(--text-main);
+            line-height: 1.6;
+        }
+
+        /* Top Navigation Header */
+        header {
+            background-color: rgba(19, 27, 46, 0.8);
+            backdrop-filter: blur(12px);
+            border-bottom: 1px solid var(--border);
+            padding: 16px 6%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .logo {
+            font-size: 1.4rem;
+            font-weight: 800;
+            letter-spacing: -0.5px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .logo span {
+            color: var(--primary);
+        }
+
+        nav a {
+            text-decoration: none;
+            color: var(--text-muted);
+            margin-left: 28px;
+            font-weight: 500;
+            font-size: 0.95rem;
+            transition: color 0.2s;
+        }
+
+        nav a:hover, nav a.active {
+            color: var(--text-main);
+        }
+
+        .btn-portal {
+            background-color: var(--primary);
+            color: white;
+            padding: 8px 18px;
+            border-radius: 6px;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 0.9rem;
+            box-shadow: 0 0 15px var(--primary-glow);
+        }
+
+        /* Hero Informational Banner */
+        .hero {
+            max-width: 1200px;
+            margin: 60px auto 40px auto;
+            padding: 0 24px;
+            text-align: center;
+        }
+
+        .hero h1 {
+            font-size: 3rem;
+            font-weight: 800;
+            letter-spacing: -1px;
+            margin-bottom: 16px;
+            background: linear-gradient(135deg, #ffffff 0%, #94a3b8 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .hero p {
+            font-size: 1.15rem;
+            color: var(--text-muted);
+            max-width: 700px;
+            margin: 0 auto 32px auto;
+        }
+
+        /* Feature Matrix Grid */
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 24px;
+            max-width: 1200px;
+            margin: 0 auto 60px auto;
+            padding: 0 24px;
+        }
+
+        .feature-card {
+            background-color: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            padding: 24px;
+        }
+
+        .feature-card h3 {
+            font-size: 1.15rem;
+            margin-bottom: 10px;
+            color: white;
+        }
+
+        .feature-card p {
+            font-size: 0.95rem;
+            color: var(--text-muted);
+        }
+
+        /* Live Sandbox Ballot Box Workspace */
+        .ballot-workspace {
+            max-width: 800px;
+            margin: 0 auto 80px auto;
+            padding: 0 24px;
+        }
+
+        .ballot-box {
+            background-color: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 32px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.4);
+        }
+
+        .ballot-title {
+            font-size: 1.4rem;
+            font-weight: 700;
+            margin-bottom: 6px;
+        }
+
+        .ballot-subtitle {
+            font-size: 0.95rem;
+            color: var(--text-muted);
+            margin-bottom: 24px;
+            border-bottom: 1px solid var(--border);
+            padding-bottom: 16px;
+        }
+
+        .candidate-option {
+            background-color: var(--bg-dark);
+            border: 2px solid var(--border);
+            border-radius: 8px;
+            padding: 16px;
+            margin-bottom: 14px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .candidate-option:hover {
+            border-color: #334155;
+            background-color: var(--surface-hover);
+        }
+
+        .candidate-option.selected {
+            border-color: var(--primary);
+            background-color: rgba(37, 99, 235, 0.08);
+        }
+
+        .candidate-info h4 {
+            font-size: 1.1rem;
+            font-weight: 600;
+        }
+
+        .candidate-info p {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+        }
+
+        .radio-circle {
+            width: 20px;
+            height: 20px;
+            border: 2px solid var(--border);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .candidate-option.selected .radio-circle {
+            border-color: var(--primary);
+            background-color: var(--primary);
+        }
+
+        .candidate-option.selected .radio-circle::after {
+            content: '';
+            width: 8px;
+            height: 8px;
+            background-color: white;
+            border-radius: 50%;
+        }
+
+        .submit-btn {
+            width: 100%;
+            background-color: var(--primary);
+            color: white;
+            border: none;
+            padding: 14px;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            margin-top: 16px;
+            transition: background 0.2s;
+        }
+
+        .submit-btn:hover {
+            background-color: #1d4ed8;
+        }
+
+        /* Cryptographic Receipt Node Card */
+        .receipt-card {
+            background-color: rgba(16, 185, 129, 0.06);
+            border: 1px dashed var(--success);
+            border-radius: 8px;
+            padding: 20px;
+            margin-top: 24px;
+            display: none;
+        }
+
+        .receipt-header {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            color: var(--success);
+            font-weight: 700;
+            margin-bottom: 10px;
+            font-size: 0.95rem;
+        }
+
+        .receipt-hash {
+            font-family: monospace;
+            background-color: var(--bg-dark);
+            padding: 8px 12px;
+            border-radius: 4px;
+            font-size: 0.85rem;
+            word-break: break-all;
+            color: #cbd5e1;
+            border: 1px solid var(--border);
+        }
+
+        @media (max-width: 768px) {
+            .hero h1 { font-size: 2.2rem; }
+            nav { display: none; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Header Frame -->
+    <header>
+        <div class="logo">🛡️ Vote<span>Sphere</span></div>
+        <nav>
+            <a href="#" class="active">Technology</a>
+            <a href="#">Audit Protocols</a>
+            <a href="#">Compliance</a>
+        </nav>
+        <a href="#demo-ballot" class="btn-portal">Launch Test Ballot</a>
+    </header>
+
+    <!-- Information Presentation Hero Section -->
+    <section class="hero">
+        <h1>Secure, Verifiable Democracy for Organizations</h1>
+        <p>An institutional framework optimizing open cryptographic tallies, fully transparent auditing trails, and sovereign voter privacy protocols.</p>
+    </section>
+
+    <!-- Structural Technical Components Matrix -->
+    <section class="features-grid">
+        <div class="feature-card">
+            <h3>End-to-End Verifiable (E2E-V)</h3>
+            <p>Voters receive tracking mechanisms to verify that their personal selection was securely recorded and accurately aggregated inside the global sum.</p>
+        </div>
+        <div class="feature-card">
+            <h3>Zero-Knowledge Privacy</h3>
+            <p>Advanced zero-knowledge validation systems confirm proper voter authorization status without exposing individual identity strings to administrative tracking.</p>
+        </div>
+        <div class="feature-card">
+            <h3>Immutable Audit Ledgers</h3>
+            <p>The system stores encrypted data chains distributed across multiple auditing independent nodes to mitigate localized or single-source tampering risks.</p>
+        </div>
+    </section>
+
+    <!-- Sandbox Ballot Container Module -->
+    <section class="ballot-workspace" id="demo-ballot">
+        <div class="ballot-box">
+            <div class="ballot-title">Community Technology Proposal</div>
+            <div class="ballot-subtitle">Select one initiative variant to allocate infrastructure project funds.</div>
+            
+            <form id="votingForm" onsubmit="executeMockVote(event)">
+                <div class="candidate-option" onclick="selectCandidate(this, 'Option A')">
+                    <div class="candidate-info">
+                        <h4>Option A: Open-Source Core Upgrades</h4>
+                        <p>Direct immediate development capital to critical database layer optimizations.</p>
+                    </div>
+                    <div class="radio-circle"></div>
+                </div>
+
+                <div class="candidate-option" onclick="selectCandidate(this, 'Option B')">
+                    <div class="candidate-info">

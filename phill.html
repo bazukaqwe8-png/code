@@ -1,0 +1,348 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TalentGrid USA | Jobs & Visa Sponsorship Directory</title>
+    <style>
+        :root {
+            --primary: #1e3a8a;
+            --accent: #b91c1c;
+            --dark: #0f172a;
+            --light: #f8fafc;
+            --border: #cbd5e1;
+            --success: #16a34a;
+            --sponsor-bg: #eff6ff;
+            --sponsor-text: #2563eb;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+        }
+
+        body {
+            background-color: var(--light);
+            color: var(--dark);
+            line-height: 1.5;
+        }
+
+        header {
+            background-color: white;
+            border-bottom: 1px solid var(--border);
+            padding: 16px 5%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .logo {
+            font-size: 1.5rem;
+            font-weight: 800;
+            color: var(--primary);
+            letter-spacing: -0.5px;
+        }
+
+        .logo span {
+            color: var(--accent);
+        }
+
+        nav a {
+            text-decoration: none;
+            color: #334155;
+            margin-left: 24px;
+            font-weight: 500;
+            font-size: 0.95rem;
+        }
+
+        .btn-post {
+            background-color: var(--primary);
+            color: white !important;
+            padding: 10px 18px;
+            border-radius: 6px;
+            font-weight: 600;
+        }
+
+        .hero {
+            background: linear-gradient(135deg, #090d16 0%, #1e293b 100%);
+            color: white;
+            padding: 70px 5%;
+            text-align: center;
+        }
+
+        .hero h1 {
+            font-size: 2.8rem;
+            font-weight: 800;
+            margin-bottom: 12px;
+        }
+
+        .hero p {
+            font-size: 1.2rem;
+            margin-bottom: 30px;
+            color: #94a3b8;
+        }
+
+        .search-wrapper {
+            background-color: white;
+            padding: 12px;
+            border-radius: 8px;
+            max-width: 950px;
+            margin: 0 auto;
+            display: flex;
+            gap: 12px;
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.3);
+        }
+
+        .search-wrapper input, .search-wrapper select {
+            flex: 1;
+            padding: 14px;
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            font-size: 1rem;
+            color: var(--dark);
+            outline: none;
+        }
+
+        .search-wrapper button {
+            background-color: var(--accent);
+            color: white;
+            border: none;
+            padding: 0 32px;
+            border-radius: 6px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+        }
+
+        .main-layout {
+            max-width: 1250px;
+            margin: 48px auto;
+            padding: 0 24px;
+            display: grid;
+            grid-template-columns: 320px 1fr;
+            gap: 32px;
+        }
+
+        @media (max-width: 912px) {
+            .search-wrapper { flex-direction: column; }
+            .main-layout { grid-template-columns: 1fr; }
+        }
+
+        .sidebar {
+            background-color: white;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 24px;
+            height: fit-content;
+        }
+
+        .filter-section {
+            margin-bottom: 28px;
+            border-bottom: 1px solid #f1f5f9;
+            padding-bottom: 20px;
+        }
+
+        .filter-section:last-child {
+            border-bottom: none;
+            padding-bottom: 0;
+        }
+
+        .filter-section h3 {
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            color: #64748b;
+            margin-bottom: 14px;
+            font-weight: 700;
+        }
+
+        .filter-checkbox {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 10px;
+            font-size: 0.95rem;
+            cursor: pointer;
+            color: #334155;
+        }
+
+        .listings-meta {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 24px;
+        }
+
+        .job-card {
+            background-color: white;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 24px;
+            margin-bottom: 20px;
+            position: relative;
+        }
+
+        .badge-container {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 12px;
+        }
+
+        .job-badge {
+            background-color: #fee2e2;
+            color: var(--accent);
+            font-size: 0.75rem;
+            font-weight: 700;
+            padding: 4px 8px;
+            border-radius: 4px;
+        }
+
+        .visa-badge {
+            background-color: var(--sponsor-bg);
+            color: var(--sponsor-text);
+            font-size: 0.75rem;
+            font-weight: 700;
+            padding: 4px 8px;
+            border-radius: 4px;
+        }
+
+        .job-title {
+            color: var(--primary);
+            font-size: 1.3rem;
+            font-weight: 700;
+        }
+
+        .company {
+            font-weight: 600;
+            color: #334155;
+            margin-bottom: 12px;
+        }
+
+        .metadata-row {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 16px;
+            font-size: 0.9rem;
+            color: #64748b;
+            margin-bottom: 16px;
+        }
+
+        .pill {
+            background-color: #f1f5f9;
+            padding: 4px 12px;
+            border-radius: 20px;
+        }
+
+        .paycheck {
+            color: var(--success);
+            font-weight: 600;
+        }
+
+        .summary {
+            color: #475569;
+            font-size: 0.95rem;
+        }
+
+        .btn-view {
+            position: absolute;
+            right: 24px;
+            bottom: 24px;
+            background-color: var(--primary);
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 6px;
+            font-weight: 600;
+            text-decoration: none;
+            font-size: 0.9rem;
+        }
+
+        @media (max-width: 640px) {
+            .btn-view { position: static; display: block; margin-top: 16px; text-align: center; }
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <div class="logo">Talent<span>Grid</span> USA</div>
+        <nav>
+            <a href="#">Explore Tracks</a>
+            <a href="#">H-1B Database</a>
+            <a href="#" class="btn-post">Post a Position</a>
+        </nav>
+    </header>
+
+    <section class="hero">
+        <h1>Find Your Next Career Move in the USA</h1>
+        <p>Discover corporate roles and verified immigration sponsor tracks across tech hubs.</p>
+        <div class="search-wrapper">
+            <input type="text" id="searchInput" placeholder="Keywords (e.g. Engineer, Analyst)...">
+            <select id="salaryFilter">
+                <option value="0">Minimum Salary (All)</option>
+                <option value="100000">$100,000+ / yr</option>
+                <option value="140000">$140,000+ / yr</option>
+                <option value="160000">$160,000+ / yr</option>
+            </select>
+            <button type="button" onclick="filterJobs()">Filter Feed</button>
+        </div>
+    </section>
+
+    <div class="main-layout">
+        
+        <!-- Sidebar Navigation Filters -->
+        <aside class="sidebar">
+            <div class="filter-section">
+                <h3>Visa & Sponsorship</h3>
+                <label class="filter-checkbox">
+                    <input type="checkbox" id="visaCheckbox" onchange="filterJobs()"> 
+                    H-1B / Green Card Sponsor
+                </label>
+                <label class="filter-checkbox"><input type="checkbox"> OPT / STEM Extension</label>
+                <label class="filter-checkbox"><input type="checkbox"> TN Visa Welcome</label>
+            </div>
+
+            <div class="filter-section">
+                <h3>Work Arrangement</h3>
+                <label class="filter-checkbox"><input type="checkbox" checked> Remote Support</label>
+                <label class="filter-checkbox"><input type="checkbox" checked> Hybrid Structures</label>
+                <label class="filter-checkbox"><input type="checkbox"> Onsite</label>
+            </div>
+        </aside>
+
+        <!-- Dynamic Listings Stream -->
+        <main>
+            <div class="listings-meta">
+                <h2>Live US Vacancies</h2>
+                <span id="jobCount" style="color: #64748b; font-weight: 500;">Showing 3 matching tracks</span>
+            </div>
+
+            <div id="listingsContainer">
+                <!-- Javascript will load and toggle the job blocks safely here -->
+            </div>
+        </main>
+    </div>
+
+    <script>
+        // Production Grade Native Data Arrays
+        const jobsDatabase = [
+            {
+                title: "Senior Full-Stack Engineer",
+                company: "Stripe Inc.",
+                location: "San Francisco, CA",
+                type: "Hybrid",
+                salary: 185000,
+                salaryDisplay: "$185,000 - $210,000 /yr",
+                summary: "Seeking experienced React and Node.js engineers to expand high-volume merchant financial processing structures.",
+                urgent: true,
+                visaPremium: true
+            },
+            {
+                title: "Healthcare Data Analyst",
+                company: "UnitedHealth Group",
+                location: "Remote (US)",

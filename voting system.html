@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>VoteSphere Core | Unified Secure Election Management Portal</title>
+    <style>
+        :root {
+            --bg-dark: #090d16;
+            --surface: #131b2e;
+            --surface-hover: #1e2942;
+            --text-main: #f1f5f9;
+            --text-muted: #94a3b8;
+            --primary: #2563eb;
+            --primary-glow: rgba(37, 99, 235, 0.3);
+            --success: #10b981;
+            --danger: #ef4444;
+            --border: #1e293b;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-dark);
+            color: var(--text-main);
+            line-height: 1.6;
+            padding-bottom: 60px;
+        }
+
+        /* Top Navigation Header Control */
+        header {
+            background-color: rgba(19, 27, 46, 0.85);
+            backdrop-filter: blur(12px);
+            border-bottom: 1px solid var(--border);
+            padding: 16px 5%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .logo {
+            font-size: 1.4rem;
+            font-weight: 800;
+            letter-spacing: -0.5px;
+        }
+        .logo span { color: var(--primary); }
+
+        .role-indicator {
+            background-color: #1e293b;
+            padding: 6px 14px;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            border: 1px solid var(--border);
+            color: var(--text-muted);
+        }
+        .role-indicator.active-role {
+            color: #fff;
+            background-color: #1e3a8a;
+            border-color: var(--primary);
+        }
+
+        /* Main Workspace Container Layout */
+        .app-container {
+            max-width: 1200px;
+            margin: 40px auto;
+            padding: 0 24px;
+        }
+
+        /* Centralized Auth Selector Panel */
+        .auth-gate {
+            max-width: 480px;
+            margin: 60px auto;
+            background-color: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 32px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.5);
+        }
+
+        .auth-tabs {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 8px;
+            margin-bottom: 24px;
+            background-color: var(--bg-dark);
+            padding: 4px;
+            border-radius: 8px;
+        }
+
+        .auth-tab {
+            background: none;
+            border: none;
+            color: var(--text-muted);
+            padding: 8px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            cursor: pointer;
+            border-radius: 6px;
+            text-align: center;
+            transition: all 0.2s;
+        }
+
+        .auth-tab.active {
+            background-color: var(--primary);
+            color: white;
+        }
+
+        /* Generic Forms Styling */
+        .form-group {
+            margin-bottom: 20px;
+        }
+        .form-group label {
+            display: block;
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: var(--text-muted);
+            margin-bottom: 8px;
+            text-transform: uppercase;
+        }
+        .form-group input, .form-group textarea {
+            width: 100%;
+            padding: 12px;
+            background-color: var(--bg-dark);
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            color: white;
+            font-size: 1rem;
+            outline: none;
+        }
+        .form-group input:focus, .form-group textarea:focus { border-color: var(--primary); }
+
+        .btn-submit {
+            width: 100%;
+            background-color: var(--primary);
+            color: white;
+            border: none;
+            padding: 12px;
+            border-radius: 6px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+        }
+        .btn-submit:hover { background-color: #1d4ed8; }
+
+        /* Dashboard Views */
+        .dashboard-view {
+            display: none; /* Controlled dynamically via Javascript engine views */
+        }
+        
+        .dashboard-header {
+            margin-bottom: 30px;
+            border-bottom: 1px solid var(--border);
+            padding-bottom: 16px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .grid-two {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 32px;
+        }
+        @media (max-width: 968px) { .grid-two { grid-template-columns: 1fr; } }
+
+        .card {
+            background-color: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 24px;
+            margin-bottom: 24px;
+        }
+        .card h3 { font-size: 1.2rem; margin-bottom: 16px; border-bottom: 1px solid var(--border); padding-bottom: 10px;}
+
+        /* Voter Ballot Card System UI */
+        .ballot-option {
+            background-color: var(--bg-dark);
+            border: 2px solid var(--border);
+            border-radius: 8px;
+            padding: 16px;
+            margin-bottom: 12px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            cursor: pointer;
+        }
+        .ballot-option.selected {
+            border-color: var(--primary);
+            background-color: rgba(37, 99, 235, 0.08);
+        }
+        .radio-circle { width: 18px; height: 18px; border: 2px solid var(--border); border-radius: 50%; }
+        .ballot-option.selected .radio-circle { background-color: var(--primary); border-color: var(--primary); }
+
+        /* Dynamic Graphics Chart Layout Bars */
+        .chart-row { margin-bottom: 16px; }
+        .chart-meta { display: flex; justify-content: space-between; font-size: 0.9rem; margin-bottom: 6px;}
+        .bar-outer { width: 100%; height: 20px; background-color: var(--bg-dark); border-radius: 10px; overflow: hidden; border: 1px solid var(--border);}
+        .bar-inner { height: 100%; width: 0%; background: linear-gradient(90deg, #3b82f6, #2563eb); transition: width 0.5s; border-radius: 10px;}
+
+        /* System Audit Table lists */
+        table { width: 100%; border-collapse: collapse; margin-top: 10px; font-size: 0.9rem; }
+        th, td { padding: 12px; text-align: left; border-bottom: 1px solid var(--border); }
+        th { color: var(--text-muted); font-weight: 500; }
+
+        .badge-status { padding: 2px 8px; border-radius: 12px; font-size: 0.75rem; font-weight: bold; }
+        .badge-success { background-color: rgba(16, 185, 129, 0.15); color: var(--success); }
+        .badge-danger { background-color: rgba(239, 68, 68, 0.15); color: var(--danger); }
+
+        .logout-btn {
+            background: none; border: 1px solid var(--border); color: var(--text-muted); 
+            padding: 6px 12px; border-radius: 4px; cursor: pointer; font-size: 0.85rem;
+        }
+        .logout-btn:hover { color: white; border-color: var(--text-muted); }
+    </style>
+</head>
+<body>
+
+    <header>
+        <div class="logo">🛡️ Vote<span>Sphere</span> Core</div>
+        <div id="headerRoleBadge" class="role-indicator">Role: Unauthenticated</div>
+    </header>
+
+    <div class="app-container">
+
+        <!-- ================= AUTH GATEWAY SLIDE ================= -->
+        <div id="authGateView" class="auth-gate">
+            <h2 style="text-align: center; margin-bottom: 8px;">Access Portal</h2>
+            <p style="text-align: center; font-size: 0.9rem; color: var(--text-muted); margin-bottom: 24px;">
+                Select your functional privilege level to sign in.
+            </p>
+            
+            <div class="auth-tabs">
+                <button class="auth-tab active" onclick="switchAuthTab('voter')">Voter</button>
+                <button class="auth-tab" onclick="switchAuthTab('candidate')">Candidate</button>
+                <button class="auth-tab" onclick="switchAuthTab('admin')">Admin</button>
+            </div>
+
+            <!-- Login Input Fields -->
+            <form onsubmit="executePortalLogin(event)">
+                <div class="form-group">
+                    <label id="idFieldLabel">Voter Passcode ID</label>
+                    <input type="text" id="authIdentifier" value="VOTE-101" required>
+                    <p id="credentialTip" style="font-size: 0.75rem; color: var(--text-muted); margin-top: 6px;">
+                        Demo Credentials Hint: Use <strong>VOTE-101</strong>
+                    </p>
+                </div>
+                <button type="submit" class="btn-submit">Authenticate Session</button>
+            </form>
+        </div>
+
+
+        <!-- ================= VOTER CONTROL CENTER ================= -->
+        <div id="voterDashboard" class="dashboard-view">
+            <div class="dashboard-header">
+                <div>
+                    <h2>Voter Terminal</h2>
+                    <p style="font-size:0.9rem; color:var(--text-muted);" id="voterWelcomeName">Loading profile...</p>
+                </div>
+                <button class="logout-btn" onclick="executeLogout()">Exit Terminal</button>
+            </div>
+
+            <div class="grid-two">
+                <!-- Ballot Form Sheet -->
+                <div class="card">
+                    <h3>Secure Interactive Ballot Paper</h3>
+                    <div id="voterBallotOptionsContainer">
+                        <!-- Loaded dynamically from database state arrays -->
+                    </div>
